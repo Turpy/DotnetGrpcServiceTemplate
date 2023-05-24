@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{66DAB338-C409-4EC1-B2CD-7E5703803C58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3E06EAE-3B18-4F55-B6CC-96F2EF2D6F48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebService", "src\WebService\WebService.csproj", "{CD410771-0B96-4133-B63D-7ECF85930D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebService.Client", "src\WebService.Client\WebService.Client.csproj", "{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CD410771-0B96-4133-B63D-7ECF85930D63} = {66DAB338-C409-4EC1-B2CD-7E5703803C58}
+		{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD} = {66DAB338-C409-4EC1-B2CD-7E5703803C58}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD410771-0B96-4133-B63D-7ECF85930D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD410771-0B96-4133-B63D-7ECF85930D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD410771-0B96-4133-B63D-7ECF85930D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD410771-0B96-4133-B63D-7ECF85930D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23B25D0-382C-40AD-9AC8-9848C7BA3DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
