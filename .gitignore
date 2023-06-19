@@ -1,4 +1,6 @@
 ﻿.vs
 .idea
+.vscode
 obj
 bin
+.DS_Store
