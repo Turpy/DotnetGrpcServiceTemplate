@@ -1,19 +1,26 @@
-using WebService.Services;
+using Microsoft.OpenApi.Models;
 
+// build out the DI pipeline for the web service
 var builder = WebApplication.CreateBuilder(args);
-
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-
-// Add services to the container.
-builder.Services.AddGrpc();
-
+builder.Services.AddGrpc().AddJsonTranscoding();
+builder.Services.AddGrpcSwagger();
+builder.Services.AddSwaggerGen(gen =>
+{
+    var docFilePath = Path.Combine(System.AppContext.BaseDirectory, nameof(WebService) + ".xml");
+    gen.IncludeXmlComments(docFilePath);
+    gen.IncludeGrpcXmlComments(docFilePath, includeControllerXmlComments: true);
+    gen.SwaggerDoc("v1", new OpenApiInfo { Title = nameof(WebService) + " gRPC transcoding", Version = "v1" });
+});
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/",
-    () =>
-        "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+// configure the HTTP request pipeline.
+app.MapGrpcService<WebService.Services.V1.GreeterService>();
+app.UseSwagger();
+app.UseSwaggerUI(ui =>
+{
+    ui.SwaggerEndpoint("/swagger/v1/swagger.json", nameof(WebService) + " V1");
+    ui.RoutePrefix = "";
+});
 
+// start the web service
 app.Run();
