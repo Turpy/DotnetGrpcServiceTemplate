@@ -1,0 +1,199 @@
+nameOverride: #{ServiceName}
+
+fullnameOverride: ""
+
+deploymentLane: NOTE-THIS-WILL-BE-REPLACED-BY-CICD
+
+valuesYaml: values.yaml
+
+image:
+  repository: NOTE-THIS-WILL-BE-REPLACED-BY-CICD
+  tag: NOTE-THIS-WILL-BE-REPLACED-BY-CICD
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+
+localDeployment: false
+
+# livenessProbeSettings:
+#   httpGet:
+#     path: /healthz
+#     port: https
+
+livenessProbeSettings: null
+
+readinessProbeSettings:
+  httpGet:
+    path: #{UriPrefix}/health
+    port: 80
+  initialDelaySeconds: 3
+  periodSeconds: 8
+
+initContainerCommand: nil
+
+appsettings:
+  name: appsettings
+  filename: appsettings.json
+  mountPath: /app/
+
+appsettingsUseNameValues: false
+
+appsettingsValues:
+  {
+    "AllowedHosts": "*",
+    "CircleCiApi": {
+      "OrganizationId": "21a5deff-5418-4a73-9190-99cf70b861e9",
+      "ApiKey": "CIRCLECIAPI__APIKEY"
+    },
+    "Database": {
+      "ConnectionString": "DATABASE__CONNECTIONSTRING"
+    },
+    "FastPassApi": {
+      "Url": "https://pipelines.prog-research.com",
+      "ApiKey": "FASTPASSAPI__APIKEY"
+    },
+    "GitHubApi": {
+      "LegacyOrganization": "Prog-Leasing-LLC-Legacy",
+      "User": "GITHUBAPI__USER",
+      "Password": "GITHUBAPI__PASSWORD"
+    },
+    "JiraApi": {
+      "Url": "https://progfin.atlassian.net/rest",
+      "User": "JIRAAPI__USER",
+      "Password": "JIRAAPI__PASSWORD"
+    },
+    "Logging": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.AspNetCore": "Warning"
+      }
+    },
+    "ProcessingOptions": {
+      "GatherRepoMetrics": false,
+      "GatherTicketMetrics": false,
+      "GatherCircleCiMetrics": true
+    }
+  }
+
+
+imagePullSecrets:
+  - name: aws-artifactory
+
+awsParameterPrefix: fastpassreports
+
+certificates: true
+
+certificateFiles:
+  - name: stormwind-ca
+    parameterStoreFile: /certificateFiles/STORMWIND-PFPRDD1CA01-CA.pem
+    mountPath: /etc/ssl/certs/
+    mountFilename: stormwind.local.pem
+    localCertificateFile: stormwind.local.pem
+
+# cyberark:
+#   enabled: true
+#   secretOutputFile:
+#     enabled: true
+#     refreshIntervalSeconds: 30
+#   hostId: REPLACED-BY-OCTOPUS
+#   safe: REPLACED-BY-OCTOPUS
+#   sidecarImage: cyberark/conjur-authn-k8s-client
+#   secretsFile:
+#     filename: secrets.yml
+#     mountPath: /app/
+#   secrets:
+#     - accountName: Experian_Crosscore_Api_Credentials
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_API_CREDENTIALS_USERNAME
+#     - accountName: Experian_Crosscore_Api_Credentials
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_API_CREDENTIALS_PASSWORD
+#     - accountName: Experian_Crosscore_Api_Credentials_Backup
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_API_CREDENTIALS_BACKUP_USERNAME
+#     - accountName: Experian_Crosscore_Api_Credentials_Backup
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_API_CREDENTIALS_BACKUP_PASSWORD
+#     - accountName: Experian_Crosscore_Api_Client_Id_Secret
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_API_CLIENT_ID_SECRET_USERNAME
+#     - accountName: Experian_Crosscore_Api_Client_Id_Secret
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_API_CLIENT_ID_SECRET_PASSWORD
+#     - accountName: Experian_Crosscore_PreciseId_Credentials
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_PRECISEID_CREDENTIALS_USERNAME
+#     - accountName: Experian_Crosscore_PreciseId_Credentials
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_PRECISEID_CREDENTIALS_PASSWORD
+#     - accountName: Experian_Crosscore_PreciseId_Credentials_Backup
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_PRECISEID_CREDENTIALS_BACKUP_USERNAME
+#     - accountName: Experian_Crosscore_PreciseId_Credentials_Backup
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_PRECISEID_CREDENTIALS_BACKUP_PASSWORD
+#     - accountName: Experian_Salt
+#       key: password
+#       env_name: EXPERIAN_SALT_PASSWORD
+#     - accountName: svc-experian-crosscore-integration-readwrite
+#       key: username
+#       env_name: EXPERIAN_CROSSCORE_DB_USERNAME
+#     - accountName: svc-experian-crosscore-integration-readwrite
+#       key: password
+#       env_name: EXPERIAN_CROSSCORE_DB_PASSWORD
+
+ingress:
+  enabled: true
+  internal: true
+  external: false
+  healthCheckPath: #{UriPrefix}/health
+  paths:
+    - path: #{UriPrefix}
+      pathType: Prefix
+
+replicaCount: #{ReplicaCount}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+limits:
+  cpu: 200m
+  memory: 750Mi
+requests:
+  cpu: 100m
+  memory: 750Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations:
+- key: "network"
+  operator: "Equal"
+  value: "private"
+  effect: "NoSchedule"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: network
+            operator: In
+            values:
+              - private
+
+# Cause deployments to remove old replica sets - default is 10 if commented out. Use "0" for Zero value
+revisionHistoryLimit: "0"
